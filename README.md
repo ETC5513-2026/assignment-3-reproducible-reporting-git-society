@@ -6,4 +6,4 @@ Group Members:
 * Tushar Dhanorkar
 * Phoebe Zhang
 
-Topic: "How has the genres of the top 1000 IMDB movies changed over time?"
+Topic: "What factors drive high IMDB ratings and box office revenue?"
