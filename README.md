@@ -2,8 +2,8 @@
 
 Group Members:
 
-*
-*
-*
+* Isha Mantri
+* Tushar Dhanorkar
+* Phoebe Zhang
 
-Topic: 
+Topic: "How has the genres of the top 1000 IMDB movies changed over time?"
