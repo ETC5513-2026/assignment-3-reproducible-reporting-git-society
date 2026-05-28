@@ -51,3 +51,11 @@ The findings from the IMDB Top 1000 dataset show that both genre and audience pe
 The summary statistics in \@tbl-summary also show that gross revenue varies widely across films. A small number of blockbuster Action and Adventure films earn far more than the dataset average, which means the mean gross revenue is influenced by a few very high-performing movies. This highlights that a high IMDB rating does not always lead to high box office revenue.
 
 The relationship between Metascore and IMDB rating shows some agreement between critics and audiences, but not always. For example, Action and Science Fiction films may be enjoyed more strongly by audiences than by critics. Additionally, older films, especially from the 1970s and 1980s, maintain high ratings, possibly because only the most memorable and respected films from those decades remain highly ranked.
+
+## Conclusion :
+
+This report analysed the IMDB Top 1000 Movies dataset to explore the factors linked to high IMDB ratings and box office revenue. The findings show that film success depends on more than one measure. Genre was an important factor, with Biography and Drama films achieving some of the highest average ratings, while Action and Adventure films generated the strongest box office revenue.
+
+The analysis also showed that audience ratings and critic scores are generally related, but they do not always tell the same story. Some genres, such as Action and Science Fiction, may be more strongly appreciated by audiences than by critics. Runtime also appeared to have a positive relationship with IMDB rating, suggesting that longer films may provide more space for detailed storytelling and character development.
+
+The results highlight a clear difference between critical success and commercial success. A film can be highly rated without earning the most revenue, and a commercially successful film may not always receive the highest ratings. Therefore, film success should be understood as a combination of genre, audience response, critical reception, runtime, and commercial performance.
