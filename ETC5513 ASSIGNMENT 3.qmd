@@ -1,0 +1,53 @@
+---
+title: "ETC5513 Assignment 3"
+format: html
+editor: visual
+---
+
+## Result :
+
+The analysis of the IMDB Top 1000 dataset highlights some interesting differences between films that perform well critically and those that perform well commercially. As shown in \@fig-gross, Action and Adventure films make up most of the top 10 highest-grossing movies, suggesting that large-scale, visually engaging genres tend to attract bigger audiences and generate higher box office revenue.
+
+On the other hand, \@fig-genre shows that Drama and Biography films have some of the highest average IMDB ratings. However, these films generally earn lower gross revenue compared to Action and Adventure films. This suggests that movies can be highly appreciated by viewers and critics without necessarily becoming major box office successes.
+
+Another pattern observed is that films with runtimes above 150 minutes tend to receive higher ratings. This may indicate that longer films allow for more detailed storytelling, stronger character development, and richer narratives, which IMDB users may value.
+
+Genre appears to be an important factor in shaping both IMDB ratings and gross revenue. The results show a clear contrast between **critical success** and **commercial success**, with some genres performing better in ratings while others dominate financially.
+
+```{r}
+#| warning: false
+#| message: false
+library(tidyverse)
+
+imdb <- read.csv("data/imdb_clean.csv")
+
+#| label: fig-gross
+#| fig-cap: "Top 10 highest grossing movies in the IMDB Top 1000 dataset. Revenue shown in millions USD."
+#| fig-width: 8
+#| fig-height: 5
+imdb |>
+  filter(!is.na(Gross)) |>
+  arrange(desc(Gross)) |>
+  head(10) |>
+  ggplot(aes(x = reorder(Series_Title, Gross),
+             y = Gross / 1e6,
+             fill = Gross)) +
+  geom_col(width = 0.7) +
+  coord_flip() +
+  scale_fill_gradient(low = '#a8edea', high = '#1565c0') +
+  labs(x = 'Movie Title',
+       y = 'Gross Revenue (Million USD)',
+       title = 'Top 10 Highest Grossing Movies',
+       subtitle = 'Based on IMDB Top 1000 Movies Dataset') +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = 'none',
+        plot.title = element_text(face = 'bold'))
+```
+
+## Discussion :
+
+The findings from the IMDB Top 1000 dataset show that both genre and audience perception play an important role in shaping a film’s success. As shown in \@fig-genre, Biography, Drama, and Animation films tend to achieve some of the highest average IMDB ratings. This suggests that audiences often value films with strong storytelling, emotional depth, and well-developed characters. In contrast, genres such as Horror and Thriller receive comparatively lower ratings, even though they may still attract strong commercial interest.
+
+The summary statistics in \@tbl-summary also show that gross revenue varies widely across films. A small number of blockbuster Action and Adventure films earn far more than the dataset average, which means the mean gross revenue is influenced by a few very high-performing movies. This highlights that a high IMDB rating does not always lead to high box office revenue.
+
+The relationship between Metascore and IMDB rating shows some agreement between critics and audiences, but not always. For example, Action and Science Fiction films may be enjoyed more strongly by audiences than by critics. Additionally, older films, especially from the 1970s and 1980s, maintain high ratings, possibly because only the most memorable and respected films from those decades remain highly ranked.
