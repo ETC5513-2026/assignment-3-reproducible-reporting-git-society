@@ -1,30 +1,71 @@
 ---
 title: "What Factors Drive High IMDB Ratings and Box Office Revenue?"
-author:
-  - name: Phoebe Zhang
-  - name: Tushar Dhanorkar
-  - name: Isha Mantri
-format: html
-editor: visual
+author: "Tushar Dhanorkar, Phoebe Zhang, Isha Mantri"
+format:
+  pdf:
+    toc: true
+    number-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+bibliography: references.bib
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
 ```{r}
-1 + 1
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(knitr)
+
+imdb <- read.csv("data/imdb_clean.csv")
 ```
 
-You can add options to executable code like this
+## Executive summary (Isha's part)
 
-```{r}
-#| echo: false
-2 * 2
-```
+## Introduction:
 
-The `echo: false` option disables the printing of code (only output is displayed).
+The global film industry represents one of the most commercially significant entertainment sectors worldwide, with box office revenue reaching approximately \$26 billion USD annually prior to the COVID-19 pandemic. IMDB, the world's largest online movie database, attracts over 250 million unique visitors monthly and hosts ratings from more than 1.3 billion registered users, making it one of the most widely used platforms for evaluating film quality and popularity.
+
+Understanding what drives a movie's success — both critically and commercially — is of significant importance to studios, producers, directors, and investors. However, film success is not straightforward. A movie can receive strong critical praise while underperforming at the box office, or achieve remarkable commercial success without earning high audience ratings. This report evaluates success from two distinct perspectives: perceived quality, measured through IMDB user ratings and Metascores, and commercial performance, measured through gross box office revenue.
+
+A range of factors have been proposed to influence these outcomes, including a film's genre, runtime, director, lead actors, and release era. Despite this, there remains a lack of systematic data-driven analysis examining which of these factors most strongly predict success across both dimensions.
+
+This report addresses that gap by analysing the IMDB Top 1000 Movies dataset, sourced from Kaggle \[\@imdb_dataset\], which comprises the 1000 highest-rated films spanning nearly a century of cinema from the 1920s to the 2020s. The analysis focuses on key variables including genre, runtime, release decade, Metascore, number of user votes, and gross revenue. By applying descriptive statistical methods and data visualisation techniques in R \[\@r_language\], this report aims to uncover meaningful patterns associated with film success and provide evidence-based insights for filmmakers and studios.
+
+## Data:
+
+The dataset used in this analysis is the IMDB Top 1000 Movies dataset, sourced from Kaggle \[\@imdb_dataset\]. It contains information on the 1000 highest-rated films on IMDB, spanning
+nearly a century of cinema from the 1920s to the 2020s.
+
+The key variables used in this analysis include:
+
+**Genre** - the primary genre of the film
+**Runtime** - the duration of the film in minutes
+**IMDB Rating** - the average user rating on IMDB (scale 1-10)
+**Metascore** - the critic score from Metacritic (scale 0-100)
+**No of Votes**- the total number of user votes on IMDB
+**Gross Revenue** - the worldwide box office gross in USD
+**Director** -the director of the film
+**Stars** - the lead actors in the film
+**Release Year** - the year the film was released
+
+During the data cleaning process, films with missing gross revenue values were excluded from the commercial performance analysis. Additionally, where multiple directors were listed, only the first listed director was retained due to inconsistencies in the original data structure.
+
+## Method:
+
+This analysis uses descriptive statistical methods and data visualisation techniques to identify patterns associated withfilm success.
+
+For commercial performance, average gross revenue was calculated and compared across genres, runtime groups, directors and actors. For perceived quality, average IMDB ratings were compared across the same categories.
+
+Runtime was grouped into four categories:
+
+- Less than 90 minutes
+- 90 to 120 minutes
+- 120 to 150 minutes
+- More than 150 minutes
+
+All analysis was conducted in R \[\@r_language\] using the
+tidyverse package \[\@tidyverse\] for data manipulation and
+visualisation.
