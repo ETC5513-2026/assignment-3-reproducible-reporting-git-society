@@ -29,9 +29,10 @@ imdb_clean <- imdb_raw |>
   # Add Decade column
   mutate(Decade = paste0(floor(Released_Year / 10) * 10, "s")) |>
   
-  # Remove rows with missing IMDB Rating (critical variable)
+  # Remove rows with missing IMDB Rating and Gross Revenue
   filter(!is.na(IMDB_Rating)) |>
-  filter(!(is.na(Certificate) & is.na(Meta_score) & is.na(Gross))) |>
+  filter(!(is.na(Gross))) |>
+  
   # Reorder columns neatly
   select(Series_Title, Released_Year, Decade, Certificate,
          Runtime, Genre, Primary_Genre, IMDB_Rating,
