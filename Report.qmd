@@ -28,7 +28,7 @@ imdb <- read.csv("data/imdb_clean.csv")
 
 The global film industry represents one of the most commercially significant entertainment sectors worldwide, with box office revenue reaching approximately \$26 billion USD annually prior to the COVID-19 pandemic. IMDB, the world's largest online movie database, attracts over 250 million unique visitors monthly and hosts ratings from more than 1.3 billion registered users, making it one of the most widely used platforms for evaluating film quality and popularity.
 
-Understanding what drives a movie's success — both critically and commercially — is of significant importance to studios, producers, directors, and investors. However, film success is not straightforward. A movie can receive strong critical praise while underperforming at the box office, or achieve remarkable commercial success without earning high audience ratings. This report evaluates success from two distinct perspectives: perceived quality, measured through IMDB user ratings and Metascores, and commercial performance, measured through gross box office revenue.
+Understanding what drives a movie's success both critically and commercially is of significant importance to studios, producers, directors, and investors. However, film success is not straightforward. A movie can receive strong critical praise while underperforming at the box office, or achieve remarkable commercial success without earning high audience ratings. This report evaluates success from two distinct perspectives: perceived quality, measured through IMDB user ratings and Metascores, and commercial performance, measured through gross box office revenue.
 
 A range of factors have been proposed to influence these outcomes, including a film's genre, runtime, director, lead actors, and release era. Despite this, there remains a lack of systematic data-driven analysis examining which of these factors most strongly predict success across both dimensions.
 
@@ -36,8 +36,7 @@ This report addresses that gap by analysing the IMDB Top 1000 Movies dataset, so
 
 ## Data:
 
-The dataset used in this analysis is the IMDB Top 1000 Movies dataset, sourced from Kaggle \[\@imdb_dataset\]. It contains information on the 1000 highest-rated films on IMDB, spanning
-nearly a century of cinema from the 1920s to the 2020s.
+The dataset used in this analysis is the IMDB Top 1000 Movies dataset, sourced from Kaggle \[\@imdb_dataset\]. It contains information on the 1000 highest-rated films on IMDB, spanning nearly a century of cinema from the 1920s to the 2020s.
 
 The key variables used in this analysis include:
 
@@ -55,17 +54,44 @@ During the data cleaning process, films with missing gross revenue values were e
 
 ## Method:
 
-This analysis uses descriptive statistical methods and data visualisation techniques to identify patterns associated withfilm success.
+This report uses the IMDB Top 1000 Movies dataset sourced from Kaggle \[\@imdb_dataset\], comprising the 1000 highest-rated films on IMDB spanning from the 1920s to the 2020s. All data cleaning, analysis and visualisation was conducted in R \[\@r_language\] using the tidyverse package \[\@tidyverse\].
 
-For commercial performance, average gross revenue was calculated and compared across genres, runtime groups, directors and actors. For perceived quality, average IMDB ratings were compared across the same categories.
+## Data Preparation:
 
-Runtime was grouped into four categories:
+Prior to analysis, films with missing gross revenue values were excluded from all commercial performance comparisons to ensure reliable estimates. For films where multiple directors were listed on IMDB, only the first listed director was retained. However, it was identified during the cleaning process that additional directors were incorrectly categorised as actors in the original data structure, which may affect the precision of the director and actor level findings.
 
-- Less than 90 minutes
-- 90 to 120 minutes
-- 120 to 150 minutes
-- More than 150 minutes
+Runtime was grouped into four categories to allow comparison across film lengths:
 
-All analysis was conducted in R \[\@r_language\] using the
-tidyverse package \[\@tidyverse\] for data manipulation and
-visualisation.
+-   Less than 90 minutes
+
+-   90 to 120 minutes
+
+-   120 to 150 minutes
+
+-   More than 150 minutes
+
+**Analysis Approach**
+
+The analysis examines two measures of film success separately:
+
+-   **Perceived quality** -measured using average IMDB user ratings
+
+-   **Commercial performance** -measured using average gross box office revenue in USD
+
+The following factors were examined against both measures:
+
+-   `Genre` -Average gross revenue compared across genres (Figure 1) and average IMDB rating compared across genres (Table 1)
+
+-   `Runtime` - Average IMDB rating (Figure 2) and average gross revenue (Figure 3) compared across runtime groups
+
+-   `Metascore` - Relationship between critic score and IMDB rating examined using a scatter plot (Figure 4)
+
+-   `Number of votes` - Relationship between vote count and IMDB rating examined using a scatter plot (Figure 5)
+
+-   `Director` - Top directors ranked by average IMDB rating (Figure 6) and average gross revenue (Figure 7)
+
+-   `Actor` - Top actors ranked by average IMBO rating (Table 2) and average gross revenue (Figure 8)
+
+-   `Release year` - Distribution of films across release years examined to identify temporal patterns in the dataset (Figure 9)
+
+All figures and tables are produced using ggplot2 \[\@tidyverse\] and knitr \[\@knitr\] within a reproducible Quarto document \[\@quarto\].
