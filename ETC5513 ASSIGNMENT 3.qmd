@@ -59,3 +59,21 @@ This report analysed the IMDB Top 1000 Movies dataset to explore the factors lin
 The analysis also showed that audience ratings and critic scores are generally related, but they do not always tell the same story. Some genres, such as Action and Science Fiction, may be more strongly appreciated by audiences than by critics. Runtime also appeared to have a positive relationship with IMDB rating, suggesting that longer films may provide more space for detailed storytelling and character development.
 
 The results highlight a clear difference between critical success and commercial success. A film can be highly rated without earning the most revenue, and a commercially successful film may not always receive the highest ratings. Therefore, film success should be understood as a combination of genre, audience response, critical reception, runtime, and commercial performance.
+
+## Recommendation :
+
+**For Studios Prioritising Critical Acclaim**\
+
+Studios aiming for stronger critical and audience ratings should consider investing in Biography, Drama, and Animation films. These genres tend to perform well because they often focus on strong storytelling, emotional depth, and well-developed characters. Collaborating with experienced directors in these genres may also help improve the overall quality and reception of the film.
+
+**For Studios Prioritising Box Office Revenue**\
+
+Studios focused on commercial success should continue to invest in Action, Adventure, and Science Fiction films. These genres often attract wider audiences and are well suited to large-scale production, franchise development, sequels, and strong marketing campaigns.
+
+**For Independent Filmmakers**\
+
+Independent filmmakers should focus on genre-appropriate stories with clear narratives and strong creative direction. The findings suggest that success is not only dependent on budget or star power, but also on factors such as genre, runtime, and the ability to engage audiences through meaningful storytelling.
+
+**For the Film Industry Broadly**\
+
+The industry should use a balanced approach when measuring film success. Instead of focusing only on box office revenue, studios and analysts should also consider IMDB ratings and Metascore. This would provide a fuller understanding of both short-term commercial performance and long-term audience value.
