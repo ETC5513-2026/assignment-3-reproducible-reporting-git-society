@@ -4,27 +4,312 @@ author:
   - name: Phoebe Zhang
   - name: Tushar Dhanorkar
   - name: Isha Mantri
-format: html
+format: 
+  pdf: 
+    fig-pos: 'H'
+execute:
+  echo: false
+  warning: false
+  message: false
 editor: visual
 ---
 
-## Quarto
+```{r, Data Cleaning}
+#| results: hide
+library(tidyverse)
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+# ---- Load Raw Data ----
+imdb_raw <- read_csv("data/IMDB_top_1000.csv")
+glimpse(imdb_raw)
 
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+# ---- Clean Data ----
+imdb_clean <- imdb_raw %>%
+  
+  # Drop columns not needed for analysis
+  select(-c(Poster_Link, Overview)) %>%
+  
+  # Released_Year to numeric
+  mutate(Released_Year = suppressWarnings(as.numeric(Released_Year))) %>%
+  
+  # Runtime to numeric and remove " min"
+  mutate(Runtime = as.numeric(str_remove(Runtime, " min"))) %>%
+  
+  # Add Decade column
+  mutate(Decade = paste0(floor(Released_Year / 10) * 10, "s")) %>%
+  
+  # Remove rows with missing IMDB Rating and Gross Revenue
+  filter(!is.na(IMDB_Rating)) %>%
+  filter(!(is.na(Gross))) %>%
+  
+  # Reorder columns neatly
+  select(Series_Title, Released_Year, Decade, Certificate,
+         Runtime, Genre, IMDB_Rating, Meta_score, 
+         Director, Star1, Star2, Star3, 
+         Star4, No_of_Votes, Gross)
 ```
 
-You can add options to executable code like this
+## Results
+
+The analysis of the Top 1000 IMDb rated films highlights clear differences between films that performed well critically and those that performed well commercially.
 
 ```{r}
-#| echo: false
-2 * 2
+#| label: fig-gross
+#| fig-cap: "Top average grossing genres"
+genre_gross <- imdb_clean %>% 
+  separate_rows(Genre, sep = ", ") %>% 
+  group_by(Genre) %>% 
+  summarise(avg_gross = mean(Gross, na.rm = TRUE)) %>% 
+  arrange(desc(avg_gross))
+
+ggplot(genre_gross, aes(x = reorder(Genre, avg_gross), y = avg_gross)) + 
+  geom_col() + 
+  coord_flip() + 
+  labs( x = "Genre", y = "Average Gross Revenue" ) + 
+  theme_minimal()
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+As shown in @fig-gross, Adventure and Sci-Fi genres record the highest average gross revenue.
+
+```{r}
+#| label: tbl-rating
+#| tbl-caption: "Top genres by average IMDb Rating"
+
+library(knitr)
+
+genre_rating <- imdb_clean %>% 
+  separate_rows(Genre, sep = ", ") %>% 
+  group_by(Genre) %>% 
+  summarise(avg_rating = mean(IMDB_Rating, na.rm = TRUE)) %>% 
+  arrange(desc(avg_rating)) %>%
+  slice_head(n = 10)
+
+kable(genre_rating,
+      digits = 2,
+      col.names = c("Genre", "Average Rating"))
+
+```
+
+In contrast, Western and War films achieve the highest average IMDb ratings, as shown in @tbl-rating.
+
+```{r}
+#| label: fig-runtime-rating
+#| fig-cap: "Average Ratings per Runtime Group"
+runtime <- imdb_clean %>%
+  mutate(runtime_group = cut(Runtime,
+                             breaks = c(0, 90, 120, 150, 300),
+                             labels = c("<90", "90–120", "120–150", ">150")))
+
+ggplot(runtime, aes(x = runtime_group, y = IMDB_Rating)) +
+  geom_boxplot() +
+  labs(
+    title = "IMDb Rating by Runtime Category",
+    x = "Runtime Group",
+    y = "IMDb Rating"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: fig-runtime-gross
+#| fig-cap: "Average Gross Revenue per Runtime Group"
+runtime %>%
+  group_by(runtime_group) %>%
+  summarise(avg_gross = mean(Gross, na.rm = TRUE)) %>%
+  ggplot(aes(x = runtime_group, y = avg_gross)) +
+  geom_col() +
+  labs(
+    title = "Average Gross Revenue by Runtime Group",
+    x = "Runtime Group",
+    y = "Average Gross Revenue"
+  ) +
+  theme_minimal()
+```
+
+Films with longer runtimes (above approximately 150 minutes) tend to have slightly higher average IMDb ratings (@fig-runtime-rating) and perform better in the box office (@fig-runtime-gross).
+
+```{r}
+#| label: fig-meta-rating
+#| fig-cap: "Relationship between Meta score and IMDb Rating"
+ggplot(imdb_clean, aes(x = Meta_score, y = IMDB_Rating)) +
+  geom_point() +
+  labs(x = "Meta Score", y = "IMDb Rating") +
+  theme_minimal()
+```
+
+```{r}
+#| label: fig-votes-rating
+#| fig-cap: "Relationship between Number of Votes and IMDb Rating"
+ggplot(imdb_clean, aes(x = No_of_Votes, y = IMDB_Rating)) +
+  geom_point() +
+  scale_x_log10() +
+  theme_minimal()
+```
+
+A positive relationship is observed between Meta score and IMDb rating (@fig-meta-rating). Similarly, the number of votes is positively associated with IMDb ratings (@fig-votes-rating).
+
+```{r}
+#| label: fig-director-rating
+#| fig-cap: "Directors with Highest Average IMDb Rating"
+director_rating <- imdb_clean %>%
+  group_by(Director) %>%
+  summarise(
+    avg_rating = mean(IMDB_Rating, na.rm = TRUE),
+    movie_count = n()
+  ) %>%
+  filter(movie_count >= 3) %>%
+  arrange(desc(avg_rating)) %>%
+  slice_head(n = 10)
+
+ggplot(director_rating,
+       aes(x = reorder(Director, avg_rating),
+           y = avg_rating)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Top Directors by Average IMDb Rating",
+    x = "Director",
+    y = "Average IMDb Rating"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: fig-director-gross
+#| fig-cap: "Directors with Highest Average Gross Revenue"
+director_gross <- imdb_clean %>%
+  group_by(Director) %>%
+  summarise(
+    avg_gross = mean(Gross, na.rm = TRUE),
+    movie_count = n()
+  ) %>%
+  filter(movie_count >= 3) %>%
+  arrange(desc(avg_gross)) %>%
+  slice_head(n = 10)
+
+ggplot(director_gross,
+       aes(x = reorder(Director, avg_gross),
+           y = avg_gross)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Top Directors by Average Gross Revenue",
+    x = "Director",
+    y = "Average Gross Revenue"
+  ) +
+  theme_minimal()
+```
+
+Director-level results show that Christopher Nolan films have the highest average IMDb rating `r round(director_rating$avg_rating[1], 2)` (8.46) (@fig-director-rating), while Anthony Russo films have the highest average gross revenue (@fig-director-gross).
+
+```{r}
+#| label: tbl-actor-rating
+#| tbl-cap: "Actors with Highest Average IMDb Rating"
+all_stars <- imdb_clean %>%
+  pivot_longer(
+    cols = starts_with("Star"),
+    names_to = "star_position",
+    values_to = "actor"
+  )
+
+high_rating_actors <- all_stars %>%
+  group_by(actor) %>%
+  summarise(
+    movie_count = n(),
+    avg_rating = mean(IMDB_Rating, na.rm = TRUE)
+  ) %>%
+  
+  # Keep actors with enough films
+  filter(movie_count >= 3) %>%
+  
+  # Sort by highest average rating
+  arrange(desc(avg_rating)) %>%
+  
+  # Top 10 actors
+  slice_head(n = 10)
+
+# View results
+kable(high_rating_actors, 
+      digits = 2,
+      col.names = c("Actor", "Number of Movies", "Average Rating"))
+```
+
+```{r}
+#| label: fig-actor-gross
+#| fig-cap: "Actors with Highest Average Gross Revenue"
+high_revenue_actors <- all_stars %>%
+  group_by(actor) %>%
+  summarise(
+    movie_count = n(),
+    avg_gross = mean(Gross, na.rm = TRUE)
+  ) %>%
+  
+  # Keep actors with enough films
+  filter(movie_count >= 3) %>%
+  
+  # Sort by revenue
+  arrange(desc(avg_gross)) %>%
+  
+  # Top 10 actors
+  slice_head(n = 10)
+
+ggplot(high_revenue_actors,
+       aes(x = reorder(actor, avg_gross),
+           y = avg_gross)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Actors Associated with Highest Average Gross Revenue",
+    x = "Actor",
+    y = "Average Gross Revenue"
+  ) +
+  theme_minimal()
+```
+
+Actor-level results indicate that Elijah Wood and Orlando Bloom appear in films with higher average IMDb ratings (@tbl-actor-rating), while Robert Downey Jr. and Zoe Saldana are associated with higher average gross revenue (@fig-actor-gross).
+
+## Discussion
+
+The results suggest that film success is multi-dimensional, with different factors contributing to commercial performance and perceived quality. The moderate positive relationship between Meta score and IMDb rating indicates partial alignment between critic evaluations and audience perceptions. However, substantial variation suggests that audiences do not always agree with critics in their assessments of film quality.
+
+The analysis of the number of votes further supports this distinction. Films with higher vote counts tend to have higher IMDb ratings, although this relationship is likely driven by audience exposure rather than intrinsic quality. Films that are more widely viewed accumulate more ratings, which increases the stability and reliability of the observed IMDb scores.
+
+Adventure and Sci-Fi films tend to generate the highest average gross revenue, reflecting the commercial appeal of visually driven and large-scale productions. However, higher revenue does not necessarily correspond to higher IMDb ratings, reinforcing the divergence between commercial success and perceived quality.
+
+Runtime shows that longer films tend to receive slightly higher IMDb ratings. This may reflect the potential for more complex storytelling and character development in longer films, which audiences may value more.
+
+At the director level, the results suggest differences in performance across individuals, with Christopher Nolan associated with higher average IMDb ratings and Anthony Russo associated with higher average gross revenue. This may reflect differences between critically acclaimed filmmaking and franchise-based commercial success.
+
+Similarly, actor-level analysis suggests variation in associations with both ratings and revenue. Some actors are more strongly associated with high-grossing films, while others appear more frequently in highly rated films. This pattern is consistent with the concept of star power, where well-known actors contribute to commercial visibility and box office performance. However, these findings should be interpreted cautiously due to uneven representation across films and potential dataset inconsistencies in the underlying data structure.
+
+```{r}
+#| label: fig-year-dist
+#| fig-cap: Distribution of Release Years in the Dataset
+ggplot(imdb_clean, aes(x = Released_Year)) +
+  geom_histogram() +
+  labs(
+    title = "Distribution of Film Release Years",
+    x = "Release Year",
+    y = "Number of Films"
+  ) +
+  theme_minimal()
+```
+
+A key limitation of this study is that the dataset is restricted to the IMDb Top 1000 films, which introduces selection bias towards already successful or highly rated titles. As a result, the findings are not representative of the broader population of all films. Additionally, the temporal distribution shows a strong skew toward more recent films, meaning older films are underrepresented, limiting the ability to generalise conclusions across different film eras (@fig-year-dist).
+
+Furthermore, in the original scraping process, the reliability of the director and star level data was not consistently structured. During the cleaning process, we realised that for films where multiple directors were listed on IMDb, only the first listed director was retained, while additional directors were incorrectly categorised as actors. This reduces the precision of the conclusions drawn from the director and actor analysis and thus the interpretations in the results section may not truly reflect the displayed figure.
+
+Overall, the results indicate a clear distinction between audience evaluation (IMDb rating) and commercial success (gross revenue), with different factors influencing each outcome. These patterns are consistent with the idea that commercial success is more closely related to visibility and celebrity influence, while IMDb ratings reflect audience assessment of the film aspects itself.
+
+## Conclusion
+
+This report examined the factors associated with film success using a dataset of the IMDb Top 1000 films, with success defined in terms of both commercial performance (gross revenue) and perceived quality (IMDb ratings). The findings demonstrate that film success is multi-dimensional, with clear differences in the determinants of critical reception and financial performance.
+
+Overall, the results indicate only a moderate alignment between critic evaluations (Meta score) and audience perceptions (IMDb ratings), suggesting that critical and audience judgments are related but not equivalent. Similarly, while films with higher visibility tend to accumulate more votes and slightly higher ratings, this effect appears to reflect exposure rather than inherent quality differences.
+
+Genre analysis highlights a strong commercial advantage for Adventure and Sci-Fi films, which achieve the highest average gross revenue. However, this does not translate into higher audience ratings, reinforcing a separation between commercial appeal and perceived quality. Runtime shows a relationship with both IMDb ratings and box office revenue, suggesting influence on both audience evaluation and commercial value.
+
+At the individual level, differences between directors and actors further support the distinction between commercial and critical success. Some figures are more strongly associated with high-grossing films, while others are linked to higher-rated productions, reflecting different industry roles and production contexts such as franchise filmmaking versus director-led work.
+
+However, these conclusions should be interpreted in light of important limitations. The dataset is restricted to top-rated films, introducing selection bias and limiting generalisability to the broader film industry. Additionally, the overrepresentation of recent films constrains historical comparison. Data quality issues in the scraping process, particularly the misclassification of multiple directors as actors, also reduce the precision of some role-based interpretations.
+
+In summary, the analysis provides evidence that commercial success and perceived quality are influenced by different factors such that a film can be highly rated without earning the most revenue, and a commercially successful film may not always receive the highest ratings. These findings highlight the complexity of defining “success” in the film industry and demonstrate the importance of considering the combination of multiple factors when evaluating film performance.
