@@ -24,45 +24,41 @@ imdb <- read.csv("data/imdb_clean.csv")
 
 ## Introduction:
 
-The film industry is one of the biggest and most valuable entertainment businesses in the world. Before COVID-19 disrupted everything, it was generating around \$26 billion USD at the box office every single year. IMDB — the go-to website for movie information and ratings — gets over 250 million visitors every month, with more than 1.3 billion registered users sharing their opinions on films worldwide.
+Before COVID-19 turned everything upside down, the global film industry was pulling in around \$26 billion USD at the box office every year. IMDB the go-to site for movie ratings gets over 250 million visitors a month, with more than 1.3 billion users worldwide sharing their views on films. So what actually makes a movie successful? It is a harder question than it sounds some films get rave reviews but barely sell a ticket, while others break box office records without a single award to their name. We look at success from two sides: how good people think a film is, through IMDB ratings and Metascores, and how much money it actually makes at the box office. Things like genre, runtime, director, cast and the decade a film was released in are all thought to play a role. To find out which ones actually matter, we used the IMDB Top 1000 Movies dataset from Kaggle (\@imdb_dataset) 1000 of the highest-rated films spanning from the 1920s all the way to the 2020s. All the analysis and visualisation was done in R (\@r_language). Our aim is simple figure out what really drives film success and give filmmakers and studios something practical to work with.
 
-But what actually makes a movie successful? That's the core question this report tries to answer. Success in film is surprisingly complicated — a movie can be critically adored but completely bomb at the box office, or rake in hundreds of millions while getting panned by critics. We approach success from two angles: how good people think a film is, captured through IMDB user ratings and Metascores, and how much money it actually makes through box office revenue.
+## Data
 
-Plenty of things are thought to influence a film's performance — its genre, how long it is, who directed it, which actors star in it, and even the era it was released in. Yet despite all the speculation, there's surprisingly little data-driven research that brings all of these factors together in one place.
-
-That's exactly the gap this report fills. Using the IMDB Top 1000 Movies dataset from Kaggle \[\@imdb_dataset\] — covering the 1000 highest-rated films from the 1920s right through to the 2020s — we dig into variables like genre, runtime, release decade, Metascore, number of votes and gross revenue. Through data analysis and visualisation in R \[\@r_language\], we aim to uncover what genuinely drives film success and give filmmakers and studios something useful to work with.Data:
-
-The dataset used in this analysis is the IMDB Top 1000 Movies dataset, sourced from Kaggle (\@imdb_dataset). It contains information on the 1000 highest-rated films on IMDB, spanning nearly a century of cinema from the 1920s to the 2020s.
+The dataset used in this analysis is the IMDB Top 1000 Movies dataset, sourced from Kaggle (\@imdb_dataset). It contains information on the 1000 highest-rated films on IMDB, spanning nearly a century of cinema from the 1920s to the 2020s
 
 The key variables used in this analysis include:
 
--   **Runtime** — how long the film runs, measured in minutes
+-   **Runtime** - how long the film runs, measured in minutes
 
--   **Genre** — the main category the film falls under, such as Action, Drama or Comedy
+-   **Genre** - the main category the film falls under, such as Action, Drama or Comedy
 
--   **IMDB Rating** — the average score given by users on IMDB, rated on a scale of 1 to 10
+-   **IMDB Rating** - the average score given by users on IMDB, rated on a scale of 1 to 10
 
--   **Metascore** — the critic rating from Metacritic, scored out of 100
+-   **Metascore** - the critic rating from Metacritic, scored out of 100
 
--   **Number of Votes** — the total number of users who rated the film on IMDB
+-   **Number of Votes** - the total number of users who rated the film on IMDB
 
--   **Gross Revenue** — the total worldwide box office earnings in USD
+-   **Gross Revenue** - the total worldwide box office earnings in USD
 
--   **Director** — the person who directed the film
+-   **Director** - the person who directed the film
 
--   **Stars** — the lead actors featured in the film
+-   **Stars** - the lead actors featured in the film
 
--   **Release Year** — the year the film was officially released
+-   **Release Year** - the year the film was officially released
 
-    During the data cleaning process, films with missing gross revenue values were excluded from the commercial performance analysis. Additionally, where multiple directors were listed, only the first listed director was retained due to inconsistencies in the original data structure.
+A few cleaning decisions were made before the analysis began. Films that had no gross revenue recorded were left out of the commercial performance comparisons - keeping those in would have skewed the results. We also noticed that some films had multiple directors listed on IMDB, so we kept only the first listed director for consistency. It's worth noting though that this created a small issue - in some cases, the additional directors ended up being incorrectly recorded as actors in the dataset, which is something to keep in mind when reading the director and actor findings.
 
-## Method:
-
-This report uses the IMDB Top 1000 Movies dataset sourced from Kaggle (\@imdb_dataset), comprising the 1000 highest-rated films on IMDB spanning from the 1920s to the 2020s. All data cleaning, analysis and visualisation was conducted in R (\@r_language) using the tidyverse package (\@tidyverse).
+## Methods
 
 ### **Data Preparation**:
 
-Prior to analysis, films with missing gross revenue values were excluded from all commercial performance comparisons to ensure reliable estimates. For films where multiple directors were listed on IMDB, only the first listed director was retained. However, it was identified during the cleaning process that additional directors were incorrectly categorised as actors in the original data structure, which may affect the precision of the director and actor level findings.
+Before jumping into the analysis, we did some tidying up of the data. Any film that was missing a gross revenue figure was removed from the commercial performance side of things - keeping them in would have made the averages unreliable.
+
+We also ran into a quirk with the director data. Some films on IMDB have more than one director listed, but since the dataset wasn't structured consistently to handle that, we kept only the first director mentioned for each film. The tricky part is that the extra directors didn't just disappear - they ended up being misclassified as actors in the dataset instead. This is worth keeping in mind when looking at the director and actor results, as it may have affected how accurate those findings are.
 
 Runtime was grouped into four categories to allow comparison across film lengths:
 
