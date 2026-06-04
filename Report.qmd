@@ -16,7 +16,6 @@ execute:
 bibliography: references.bib
 ---
 
-
 ```{r}
 #| label: setup
 #| include: false
@@ -33,7 +32,7 @@ This report analyses the IMDB Top 1000 Movies dataset to identify the key factor
 
 ## Introduction
 
-Before COVID-19 turned everything upside down, the global film industry was pulling in around \$26 billion USD at the box office every year. IMDB the go-to site for movie ratings gets over 250 million visitors a month, with more than 1.3 billion users worldwide sharing their views on films. So what actually makes a movie successful? It is a harder question than it sounds some films get rave reviews but barely sell a ticket, while others break box office records without a single award to their name. We look at success from two sides: how good people think a film is, through IMDB ratings and Metascores, and how much money it actually makes at the box office. Things like genre, runtime, director, cast and the decade a film was released in are all thought to play a role. To find out which ones actually matter, we used the IMDB Top 1000 Movies dataset from Kaggle (@imdb_dataset) 1000 of the highest-rated films spanning from the 1920s all the way to the 2020s. All the analysis and visualisation was done in R (@r_language). Our aim is simple figure out what really drives film success and give filmmakers and studios something practical to work with.
+Before COVID-19 turned everything upside down, the global film industry was pulling in around \$26 billion USD at the box office every year. IMDB the go-to site for movie ratings gets over 250 million visitors a month, with more than 1.3 billion users worldwide sharing their views on films. So what actually makes a movie successful? It is a harder question than it sounds some films get rave reviews but barely sell a ticket, while others break box office records without a single award to their name. We look at success from two sides: how good people think a film is, through IMDB ratings and Metascores, and how much money it actually makes at the box office. Things like genre, runtime, director, cast and release year are all thought to play a role. To find out which ones actually matter, we used the IMDB Top 1000 Movies dataset from Kaggle (@imdb_dataset) 1000 of the highest-rated films spanning from the 1920s all the way to the 2020s. All the analysis and visualisation was done in R (@r_language). Our aim is simple figure out what really drives film success and give filmmakers and studios something practical to work with.
 
 ## Data
 
@@ -67,7 +66,7 @@ A few cleaning decisions were made before the analysis began. Films that had no 
 
 Before jumping into the analysis, we did some tidying up of the data. Any film that was missing a gross revenue figure was removed from the commercial performance side of things - keeping them in would have made the averages unreliable.
 
-We also ran into a quirk with the director data. Some films on IMDB have more than one director listed, but since the dataset wasn't structured consistently to handle that, we kept only the first director mentioned for each film. The tricky part is that the extra directors didn't just disappear - they ended up being misclassified as actors in the dataset instead. This is worth keeping in mind when looking at the director and actor results, as it may have affected how accurate those findings are.
+We also ran into a quirk with the director data. Some films on IMDB have more than one director listed, but since the dataset wasn't structured consistently to handle that, only the first director mentioned for each film was scraped into the director variable. The tricky part is that the extra directors didn't just disappear - they ended up being misclassified as actors in the dataset instead. This is worth keeping in mind when looking at the director and actor results, as it may have affected how accurate those findings are.
 
 ```{r, Data Cleaning}
 #| results: hide
@@ -406,7 +405,6 @@ At the director level, the results suggest differences in performance across ind
 
 Similarly, actor-level analysis suggests variation in associations with both ratings and revenue. Some actors are more strongly associated with high-grossing films, while others appear more frequently in highly rated films. This pattern is consistent with the concept of star power, where well-known actors contribute to commercial visibility and box office performance. However, these findings should be interpreted cautiously due to uneven representation across films and potential dataset inconsistencies in the underlying data structure.
 
-
 A key limitation of this study is that the dataset is restricted to the IMDb Top 1000 films, which introduces selection bias towards already successful or highly rated titles. As a result, the findings are not representative of the broader population of all films.
 
 Furthermore, in the original scraping process, the reliability of the director and star level data was not consistently structured. During the cleaning process, we realised that for films where multiple directors were listed on IMDb, only the first listed director was retained, while additional directors were incorrectly categorised as actors. This reduces the precision of the conclusions drawn from the director and actor analysis and thus the interpretations in the results section may not truly reflect the displayed figure.
@@ -431,11 +429,11 @@ In summary, the analysis provides evidence that commercial success and perceived
 
 **For Studios Prioritising Critical Acclaim**\
 
-Studios aiming for stronger critical and audience ratings should consider investing in Biography, Drama, and Animation films. These genres tend to perform well because they often focus on strong storytelling, emotional depth, and well-developed characters. Collaborating with experienced directors in these genres may also help improve the overall quality and reception of the film.
+Studios aiming to achieve stronger critical and audience ratings may benefit from focusing on genres that are more strongly associated with narrative depth and character-driven storytelling. While the results show that high-revenue genres such as Adventure and Sci-Fi do not necessarily correspond to higher IMDb ratings, more traditional or narrative-focused genres such as Western, War, and Film-Noir are often associated with stronger emphasis on storytelling, emotional complexity, and character development, which may contribute to higher audience appreciation. Additionally, collaborating with experienced directors in these genres may also help improve the overall quality and reception of the film.
 
 **For Studios Prioritising Box Office Revenue**\
 
-Studios focused on commercial success should continue to invest in Action, Adventure, and Science Fiction films. These genres often attract wider audiences and are well suited to large-scale production, franchise development, sequels, and strong marketing campaigns.
+Studios focused on commercial success should continue to invest in Adventure, Science Fiction, and Action films. These genres often attract wider audiences and are well suited to large-scale production, franchise development, sequels, and strong marketing campaigns.
 
 **For Independent Filmmakers**\
 
@@ -444,4 +442,3 @@ Independent filmmakers should focus on genre-appropriate stories with clear narr
 **For the Film Industry Broadly**\
 
 The industry should use a balanced approach when measuring film success. Instead of focusing only on box office revenue, studios and analysts should also consider IMDB ratings and Metascore. This would provide a fuller understanding of both short-term commercial performance and long-term audience value.
-
