@@ -33,11 +33,11 @@ This report analyses the IMDB Top 1000 Movies dataset to identify the key factor
 
 ## Introduction
 
-Before COVID-19 turned everything upside down, the global film industry was pulling in around \$26 billion USD at the box office every year. IMDB the go-to site for movie ratings gets over 250 million visitors a month, with more than 1.3 billion users worldwide sharing their views on films. So what actually makes a movie successful? It is a harder question than it sounds some films get rave reviews but barely sell a ticket, while others break box office records without a single award to their name. We look at success from two sides: how good people think a film is, through IMDB ratings and Metascores, and how much money it actually makes at the box office. Things like genre, runtime, director, cast and the decade a film was released in are all thought to play a role. To find out which ones actually matter, we used the IMDB Top 1000 Movies dataset from Kaggle (\@imdb_dataset) 1000 of the highest-rated films spanning from the 1920s all the way to the 2020s. All the analysis and visualisation was done in R (\@r_language). Our aim is simple figure out what really drives film success and give filmmakers and studios something practical to work with.
+Before COVID-19 turned everything upside down, the global film industry was pulling in around \$26 billion USD at the box office every year. IMDB the go-to site for movie ratings gets over 250 million visitors a month, with more than 1.3 billion users worldwide sharing their views on films. So what actually makes a movie successful? It is a harder question than it sounds some films get rave reviews but barely sell a ticket, while others break box office records without a single award to their name. We look at success from two sides: how good people think a film is, through IMDB ratings and Metascores, and how much money it actually makes at the box office. Things like genre, runtime, director, cast and the decade a film was released in are all thought to play a role. To find out which ones actually matter, we used the IMDB Top 1000 Movies dataset from Kaggle (@imdb_dataset) 1000 of the highest-rated films spanning from the 1920s all the way to the 2020s. All the analysis and visualisation was done in R (@r_language). Our aim is simple figure out what really drives film success and give filmmakers and studios something practical to work with.
 
 ## Data
 
-The dataset used in this analysis is the IMDB Top 1000 Movies dataset, sourced from Kaggle (\@imdb_dataset). It contains information on the 1000 highest-rated films on IMDB, spanning nearly a century of cinema from the 1920s to the 2020s
+The dataset used in this analysis is the IMDB Top 1000 Movies dataset, sourced from Kaggle (@imdb_dataset). It contains information on the 1000 highest-rated films on IMDB, spanning nearly a century of cinema from the 1920s to the 2020s
 
 The key variables used in this analysis include:
 
@@ -149,7 +149,7 @@ The following factors were examined against both measures:
 
 -   `Release year` - Distribution of films across release years examined to identify temporal patterns in the dataset (Figure 9)
 
-All figures and tables are produced using tidyverse (ggplot2) (\@tidyverse) and knitr (\@knitr) within a reproducible Quarto document (\@quarto).
+All figures and tables are produced using tidyverse (ggplot2) (@tidyverse) and knitr (@knitr) within a reproducible Quarto document (@quarto).
 
 ## Results
 
