@@ -1,9 +1,270 @@
 ---
-title: "What Factors Drive High IMDB Ratings andBox Office Revenue?"
+title: "What Factors Drive High IMDB Ratings and Box Office Revenue?"
 author:
   - name: Phoebe Zhang
   - name: Tushar Dhanorkar
   - name: Isha Mantri
-format: revealjs
+format: 
+  revealjs:
+    fontsize: 30px
 editor: visual
 ---
+
+## Introduction
+:::{.smaller}
+What actually makes a movie successful? It is a harder question than it sounds, some films get rave reviews but barely sell a ticket, while others break box office records without a single award to their name. We look at success from two sides: how good people think a film is, through IMDB ratings and Metascores, and how much money it actually makes at the box office. Things like genre, runtime, director, cast, and release year are all thought to play a role.
+:::
+---
+
+## Dataset Description {.smaller}
+
+The dataset sourced from Kaggle contained the top 1000 movies on IMDb spanning from the 1920s to 2020s.
+
+The key variables used in the report include:
+
+::: {.fragment}
+- **Runtime** - how long the film runs, measured in minutes
+:::
+
+::: {.fragment}
+- **Genre** - the main category the film falls under, such as Action, Drama or Comedy
+:::
+
+::: {.fragment}
+- **IMDB Rating** - the average score given by users on IMDB, rated on a scale of 1 to 10
+:::
+
+::: {.fragment}
+- **Metascore** - the critic rating from Metacritic, scored out of 100
+:::
+
+::: {.fragment}
+- **Number of Votes** - the total number of users who rated the film on IMDB
+:::
+
+::: {.fragment}
+- **Gross Revenue** - the total worldwide box office earnings in USD
+:::
+
+::: {.fragment}
+- **Director** - the person who directed the film
+:::
+
+::: {.fragment}
+- **Stars** - the lead actors featured in the film
+:::
+
+::: {.fragment}
+- **Release Year** - the year the film was officially released
+:::
+
+::: {.fragment}
+::: {.smaller}
+When exploring the data, we found that some films on IMDb have more than one director listed, but since the dataset wasn't structured consistently to handle that, so only the first director mentioned was scraped into the director variable in the raw dataset and the subsequent directors were misclassified as actors, affecting the accuracy of the results.
+:::
+:::
+---
+
+## Methods {.smaller}
+```{r, Data Cleaning}
+#| results: hide
+library(tidyverse)
+
+# ---- Load Raw Data ----
+imdb_raw <- read_csv("data/IMDB_top_1000.csv")
+glimpse(imdb_raw)
+
+# ---- Clean Data ----
+imdb_clean <- imdb_raw %>%
+  
+  # Drop columns not needed for analysis
+  select(-c(Poster_Link, Overview)) %>%
+  
+  # Released_Year to numeric
+  mutate(Released_Year = suppressWarnings(as.numeric(Released_Year))) %>%
+  
+  # Runtime to numeric and remove " min"
+  mutate(Runtime = as.numeric(str_remove(Runtime, " min"))) %>%
+  
+  # Remove rows with missing IMDB Rating and Gross Revenue
+  filter(!is.na(IMDB_Rating)) %>%
+  filter(!(is.na(Gross))) %>%
+  
+  # Reorder columns neatly
+  select(Series_Title, Released_Year, Certificate,
+         Runtime, Genre, IMDB_Rating, Meta_score, 
+         Director, Star1, Star2, Star3, 
+         Star4, No_of_Votes, Gross)
+```
+```{r}
+#| label: fig-year-dist
+#| fig-cap: Distribution of Release Years in the Dataset
+ggplot(imdb_clean, aes(x = Released_Year)) +
+  geom_histogram() +
+  labs(
+    title = "Distribution of Film Release Years",
+    x = "Release Year",
+    y = "Number of Films"
+  ) +
+  theme_minimal()
+```
+- There is a strong left-skew in the temporal distribution of release years in the data.
+
+---
+
+## Methods
+```{r}
+#| label: tbl-success-stats
+#| fig-cap: Summary Statistics of Film Success Variables (IMDb Rating & Gross Box Office Revenue)
+library(knitr)
+film_success_stats <- imdb_clean %>%
+  select(IMDB_Rating, Gross) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>% 
+  group_by(Variable) %>%
+  summarise(
+    Count = sum(!is.na(Value)),
+    Mean = mean(Value, na.rm = TRUE),
+    Median = median(Value, na.rm = TRUE),
+    Min = min(Value, na.rm = TRUE),
+    Max = max(Value, na.rm = TRUE)
+  )
+
+kable(film_success_stats,
+      digits = 2)
+```
+- Gross box office revenue is highly skewed
+- IMDb ratings have low variability
+
+::: {.smaller}
+- Only relevant variables were retained
+- The runtime was string manipulated to remove the " min" suffix
+- Films with missing gross box office revenue or IMDb ratings were removed
+:::
+---
+
+## Results {.smaller}
+::: columns
+::: {.column width="50%"}
+```{r}
+#| label: fig-gross
+#| fig-cap: "Top average grossing genres"
+genre_gross <- imdb_clean %>% 
+  separate_rows(Genre, sep = ", ") %>% 
+  group_by(Genre) %>% 
+  summarise(avg_gross = mean(Gross, na.rm = TRUE)) %>% 
+  arrange(desc(avg_gross))
+
+ggplot(genre_gross, aes(x = reorder(Genre, avg_gross), y = avg_gross)) + 
+  geom_col() + 
+  coord_flip() + 
+  labs( x = "Genre", y = "Average Gross Revenue" ) + 
+  theme_minimal()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: tbl-rating
+#| tbl-caption: "Top genres by average IMDb Rating"
+
+library(knitr)
+
+genre_rating <- imdb_clean %>% 
+  separate_rows(Genre, sep = ", ") %>% 
+  group_by(Genre) %>% 
+  summarise(avg_rating = mean(IMDB_Rating, na.rm = TRUE)) %>% 
+  arrange(desc(avg_rating)) %>%
+  slice_head(n = 10)
+
+kable(genre_rating,
+      digits = 2,
+      col.names = c("Genre", "Average Rating"))
+
+```
+:::
+:::
+::: {.smaller}
+Adventure and Sci-Fi genres record the highest average gross revenue.
+In contrast, Western and War films achieve the highest average IMDb ratings.
+:::
+---
+
+## Results
+::: columns
+::: {.column width="50%"}
+```{r}
+#| label: fig-runtime-rating
+#| fig-cap: "Average Ratings per Runtime Group"
+runtime <- imdb_clean %>%
+  mutate(runtime_group = cut(Runtime,
+                             breaks = c(0, 90, 120, 150, 300),
+                             labels = c("<90", "90–120", "120–150", ">150")))
+
+ggplot(runtime, aes(x = runtime_group, y = IMDB_Rating)) +
+  geom_boxplot() +
+  labs(
+    title = "IMDb Rating by Runtime Category",
+    x = "Runtime Group",
+    y = "IMDb Rating"
+  ) +
+  theme_minimal()
+```
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| label: fig-runtime-gross
+#| fig-cap: "Average Gross Revenue per Runtime Group"
+runtime %>%
+  group_by(runtime_group) %>%
+  summarise(avg_gross = mean(Gross, na.rm = TRUE)) %>%
+  ggplot(aes(x = runtime_group, y = avg_gross)) +
+  geom_col() +
+  labs(
+    title = "Average Gross Revenue by Runtime Group",
+    x = "Runtime Group",
+    y = "Average Gross Revenue"
+  ) +
+  theme_minimal()
+```
+:::
+:::
+::: {.smaller}
+Films with longer runtimes (above approximately 150 minutes) tend to have slightly higher average IMDb ratings and perform better in the box office.
+:::
+---
+
+## Additional Findings
+::: {.smaller}
+- A positive relationship is observed between Meta score and IMDb rating. Similarly, the number of votes is positively associated with IMDb ratings.
+- Director-level results show that Christopher Nolan films have the highest average IMDb rating , while Anthony Russo films have the highest average gross revenue.
+- Actor-level results indicate that Elijah Wood and Orlando Bloom appear in films with higher average IMDb ratings, while Robert Downey Jr. and Zoe Saldana are associated with higher average gross revenue.
+:::
+---
+
+## Conclusion
+::: {.smaller}
+- Film success is multi-dimensional, with clear differences in the determinants of critical reception and financial performance. 
+- Commercial success and perceived quality are influenced by different factors 
+- The findings highlight the complexity of defining “success” in the film industry and demonstrate the importance of considering the combination of multiple factors when evaluating film performance.
+:::
+---
+
+## Recommendations
+::: {.fragment}
+**For Critical Acclaim:** Focus on genres more strongly associated with narrative depth and character-driven storytelling such as Western, War, and Film-Noir genres
+:::
+
+::: {.fragment}
+**For Box Office Revenue:** Invest in Adventure, Science Fiction, and Action films which generally attract wide audiences and are well suited to large-scale production, franchise development, sequels, and strong marketing campaigns.
+:::
+
+::: {.fragment}
+**For Independent Filmmakers:** Focus on genre-appropriate stories with clear narratives and strong creative direction. Success is not dependent on budget or star power, but also affected by genre, runtime, and meaningful storytelling.
+:::
+
+::: {.fragment}
+**For the Film Industry Broadly:** Using a balanced approach instead of focusing only on box office revenue, rating or metascore would provide fuller understanding of both short-term commercial performance and long-term audience value.
+:::
+
