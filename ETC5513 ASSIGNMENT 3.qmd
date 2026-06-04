@@ -1,7 +1,14 @@
 ---
-title: "ETC5513 Assignment 3"
-format: html
-editor: visual
+author: "Tushar Dhanorkar, Phoebe Zhang, Isha Mantri"
+format:
+  pdf:
+    toc: true
+    number-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+bibliography: references.bib
 ---
 
 ## Result :
@@ -77,3 +84,8 @@ Independent filmmakers should focus on genre-appropriate stories with clear narr
 **For the Film Industry Broadly**\
 
 The industry should use a balanced approach when measuring film success. Instead of focusing only on box office revenue, studios and analysts should also consider IMDB ratings and Metascore. This would provide a fuller understanding of both short-term commercial performance and long-term audience value.
+
+## 
+**Executive Summary:**
+
+This report analyses the IMDB Top 1000 Movies dataset to identify the key factors driving high audience ratings and box office revenue, revealing that film success is fundamentally two-dimensional. Genre emerges as the strongest differentiator, Adventure and Sci-Fi films dominate commercially while Western, War, and Film-Noir genres earn the highest audience ratings confirming a clear divide between what makes money and what wins critical appreciation. Runtime, director and cast also play meaningful roles, with longer films and directors like Christopher Nolan linked to stronger ratings, while franchise driven directors like Anthony Russo and actors like Robert Downey Jr. lead in box office revenue. These findings suggest that studios chasing critical recognition should invest in narrative-driven genres with experienced directors, while those prioritising commercial returns should continue developing large-scale franchise productions, and that the industry as a whole would benefit from adopting a dual-metric approach that values both IMDB ratings and box office revenue equally.
