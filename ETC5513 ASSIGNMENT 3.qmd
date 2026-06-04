@@ -1,8 +1,4 @@
 ---
-<<<<<<< HEAD
-title: "What Factors Drive High IMDB Ratings and Box Office Revenue?"
-=======
->>>>>>> isha-work-here
 author: "Tushar Dhanorkar, Phoebe Zhang, Isha Mantri"
 format:
   pdf:
@@ -15,91 +11,6 @@ execute:
 bibliography: references.bib
 ---
 
-<<<<<<< HEAD
-```{r}
-#| label: setup
-#| include: false
-
-library(tidyverse)
-library(knitr)
-
-imdb <- read.csv("data/imdb_clean.csv")
-```
-
-## Introduction:
-
-Before COVID-19 turned everything upside down, the global film industry was pulling in around \$26 billion USD at the box office every year. IMDB the go-to site for movie ratings gets over 250 million visitors a month, with more than 1.3 billion users worldwide sharing their views on films. So what actually makes a movie successful? It is a harder question than it sounds some films get rave reviews but barely sell a ticket, while others break box office records without a single award to their name. We look at success from two sides: how good people think a film is, through IMDB ratings and Metascores, and how much money it actually makes at the box office. Things like genre, runtime, director, cast and the decade a film was released in are all thought to play a role. To find out which ones actually matter, we used the IMDB Top 1000 Movies dataset from Kaggle (\@imdb_dataset) 1000 of the highest-rated films spanning from the 1920s all the way to the 2020s. All the analysis and visualisation was done in R (\@r_language). Our aim is simple figure out what really drives film success and give filmmakers and studios something practical to work with.
-
-## Data
-
-The dataset used in this analysis is the IMDB Top 1000 Movies dataset, sourced from Kaggle (\@imdb_dataset). It contains information on the 1000 highest-rated films on IMDB, spanning nearly a century of cinema from the 1920s to the 2020s
-
-The key variables used in this analysis include:
-
--   **Runtime** - how long the film runs, measured in minutes
-
--   **Genre** - the main category the film falls under, such as Action, Drama or Comedy
-
--   **IMDB Rating** - the average score given by users on IMDB, rated on a scale of 1 to 10
-
--   **Metascore** - the critic rating from Metacritic, scored out of 100
-
--   **Number of Votes** - the total number of users who rated the film on IMDB
-
--   **Gross Revenue** - the total worldwide box office earnings in USD
-
--   **Director** - the person who directed the film
-
--   **Stars** - the lead actors featured in the film
-
--   **Release Year** - the year the film was officially released
-
-A few cleaning decisions were made before the analysis began. Films that had no gross revenue recorded were left out of the commercial performance comparisons - keeping those in would have skewed the results. We also noticed that some films had multiple directors listed on IMDB, so we kept only the first listed director for consistency. It's worth noting though that this created a small issue - in some cases, the additional directors ended up being incorrectly recorded as actors in the dataset, which is something to keep in mind when reading the director and actor findings.
-
-## Methods
-
-### **Data Preparation**:
-
-Before jumping into the analysis, we did some tidying up of the data. Any film that was missing a gross revenue figure was removed from the commercial performance side of things - keeping them in would have made the averages unreliable.
-
-We also ran into a quirk with the director data. Some films on IMDB have more than one director listed, but since the dataset wasn't structured consistently to handle that, we kept only the first director mentioned for each film. The tricky part is that the extra directors didn't just disappear - they ended up being misclassified as actors in the dataset instead. This is worth keeping in mind when looking at the director and actor results, as it may have affected how accurate those findings are.
-
-Runtime was grouped into four categories to allow comparison across film lengths:
-
--   Less than 90 minutes
-
--   90 to 120 minutes
-
--   120 to 150 minutes
-
--   More than 150 minutes
-
-### **Analysis Approach**
-
-The analysis examines two measures of film success separately:
-
--   **Perceived quality** -measured using average IMDB user ratings
-
--   **Commercial performance** -measured using average gross box office revenue in USD
-
-The following factors were examined against both measures:
-
--   `Genre` -Average gross revenue compared across genres (Figure 1) and average IMDB rating compared across genres (Table 1)
-
--   `Runtime` - Average IMDB rating (Figure 2) and average gross revenue (Figure 3) compared across runtime groups
-
--   `Metascore` - Relationship between critic score and IMDB rating examined using a scatter plot (Figure 4)
-
--   `Number of votes` - Relationship between vote count and IMDB rating examined using a scatter plot (Figure 5)
-
--   `Director` - Top directors ranked by average IMDB rating (Figure 6) and average gross revenue (Figure 7)
-
--   `Actor` - Top actors ranked by average IMDB rating (Table 2) and average gross revenue (Figure 8)
-
--   `Release year` - Distribution of films across release years examined to identify temporal patterns in the dataset (Figure 9)
-
-All figures and tables are produced using ggplot2 (\@tidyverse) and knitr (\@knitr) within a reproducible Quarto document (\@quarto).
-=======
 ## Result :
 
 The analysis of the IMDB Top 1000 dataset highlights some interesting differences between films that perform well critically and those that perform well commercially. As shown in \@fig-gross, Action and Adventure films make up most of the top 10 highest-grossing movies, suggesting that large-scale, visually engaging genres tend to attract bigger audiences and generate higher box office revenue.
@@ -174,8 +85,7 @@ Independent filmmakers should focus on genre-appropriate stories with clear narr
 
 The industry should use a balanced approach when measuring film success. Instead of focusing only on box office revenue, studios and analysts should also consider IMDB ratings and Metascore. This would provide a fuller understanding of both short-term commercial performance and long-term audience value.
 
-
-## **Executive Summary:**
+## 
+**Executive Summary:**
 
 This report analyses the IMDB Top 1000 Movies dataset to identify the key factors driving high audience ratings and box office revenue, revealing that film success is fundamentally two-dimensional. Genre emerges as the strongest differentiator, Adventure and Sci-Fi films dominate commercially while Western, War, and Film-Noir genres earn the highest audience ratings confirming a clear divide between what makes money and what wins critical appreciation. Runtime, director and cast also play meaningful roles, with longer films and directors like Christopher Nolan linked to stronger ratings, while franchise driven directors like Anthony Russo and actors like Robert Downey Jr. lead in box office revenue. These findings suggest that studios chasing critical recognition should invest in narrative-driven genres with experienced directors, while those prioritising commercial returns should continue developing large-scale franchise productions, and that the industry as a whole would benefit from adopting a dual-metric approach that values both IMDB ratings and box office revenue equally.
->>>>>>> isha-work-here
