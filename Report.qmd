@@ -27,11 +27,11 @@ library(knitr)
 imdb <- read.csv("data/imdb_clean.csv")
 ```
 
-## Executive Summary:
+## Executive Summary
 
 This report analyses the IMDB Top 1000 Movies dataset to identify the key factors driving high audience ratings and box office revenue, revealing that film success is fundamentally two-dimensional. Genre emerges as the strongest differentiator, Adventure and Sci-Fi films dominate commercially while Western, War, and Film-Noir genres earn the highest audience ratings confirming a clear divide between what makes money and what wins critical appreciation. Runtime, director and cast also play meaningful roles, with longer films and directors like Christopher Nolan linked to stronger ratings, while franchise driven directors like Anthony Russo and actors like Robert Downey Jr. lead in box office revenue. These findings suggest that studios chasing critical recognition should invest in narrative-driven genres with experienced directors, while those prioritising commercial returns should continue developing large-scale franchise productions, and that the industry as a whole would benefit from adopting a dual-metric approach that values both IMDB ratings and box office revenue equally.
 
-## Introduction:
+## Introduction
 
 Before COVID-19 turned everything upside down, the global film industry was pulling in around \$26 billion USD at the box office every year. IMDB the go-to site for movie ratings gets over 250 million visitors a month, with more than 1.3 billion users worldwide sharing their views on films. So what actually makes a movie successful? It is a harder question than it sounds some films get rave reviews but barely sell a ticket, while others break box office records without a single award to their name. We look at success from two sides: how good people think a film is, through IMDB ratings and Metascores, and how much money it actually makes at the box office. Things like genre, runtime, director, cast and the decade a film was released in are all thought to play a role. To find out which ones actually matter, we used the IMDB Top 1000 Movies dataset from Kaggle (\@imdb_dataset) 1000 of the highest-rated films spanning from the 1920s all the way to the 2020s. All the analysis and visualisation was done in R (\@r_language). Our aim is simple figure out what really drives film success and give filmmakers and studios something practical to work with.
 
@@ -63,11 +63,42 @@ A few cleaning decisions were made before the analysis began. Films that had no 
 
 ## Methodology
 
-### Data Preparation:
+### Data Preparation
 
 Before jumping into the analysis, we did some tidying up of the data. Any film that was missing a gross revenue figure was removed from the commercial performance side of things - keeping them in would have made the averages unreliable.
 
 We also ran into a quirk with the director data. Some films on IMDB have more than one director listed, but since the dataset wasn't structured consistently to handle that, we kept only the first director mentioned for each film. The tricky part is that the extra directors didn't just disappear - they ended up being misclassified as actors in the dataset instead. This is worth keeping in mind when looking at the director and actor results, as it may have affected how accurate those findings are.
+
+```{r, Data Cleaning}
+#| results: hide
+library(tidyverse)
+
+# ---- Load Raw Data ----
+imdb_raw <- read_csv("data/IMDB_top_1000.csv")
+glimpse(imdb_raw)
+
+# ---- Clean Data ----
+imdb_clean <- imdb_raw %>%
+  
+  # Drop columns not needed for analysis
+  select(-c(Poster_Link, Overview)) %>%
+  
+  # Released_Year to numeric
+  mutate(Released_Year = suppressWarnings(as.numeric(Released_Year))) %>%
+  
+  # Runtime to numeric and remove " min"
+  mutate(Runtime = as.numeric(str_remove(Runtime, " min"))) %>%
+  
+  # Remove rows with missing IMDB Rating and Gross Revenue
+  filter(!is.na(IMDB_Rating)) %>%
+  filter(!(is.na(Gross))) %>%
+  
+  # Reorder columns neatly
+  select(Series_Title, Released_Year, Certificate,
+         Runtime, Genre, IMDB_Rating, Meta_score, 
+         Director, Star1, Star2, Star3, 
+         Star4, No_of_Votes, Gross)
+```
 
 ```{r}
 #| label: fig-year-dist
@@ -119,38 +150,6 @@ The following factors were examined against both measures:
 -   `Release year` - Distribution of films across release years examined to identify temporal patterns in the dataset (Figure 9)
 
 All figures and tables are produced using tidyverse (ggplot2) (\@tidyverse) and knitr (\@knitr) within a reproducible Quarto document (\@quarto).
-
-
-```{r, Data Cleaning}
-#| results: hide
-library(tidyverse)
-
-# ---- Load Raw Data ----
-imdb_raw <- read_csv("data/IMDB_top_1000.csv")
-glimpse(imdb_raw)
-
-# ---- Clean Data ----
-imdb_clean <- imdb_raw %>%
-  
-  # Drop columns not needed for analysis
-  select(-c(Poster_Link, Overview)) %>%
-  
-  # Released_Year to numeric
-  mutate(Released_Year = suppressWarnings(as.numeric(Released_Year))) %>%
-  
-  # Runtime to numeric and remove " min"
-  mutate(Runtime = as.numeric(str_remove(Runtime, " min"))) %>%
-  
-  # Remove rows with missing IMDB Rating and Gross Revenue
-  filter(!is.na(IMDB_Rating)) %>%
-  filter(!(is.na(Gross))) %>%
-  
-  # Reorder columns neatly
-  select(Series_Title, Released_Year, Certificate,
-         Runtime, Genre, IMDB_Rating, Meta_score, 
-         Director, Star1, Star2, Star3, 
-         Star4, No_of_Votes, Gross)
-```
 
 ## Results
 
@@ -406,7 +405,7 @@ However, these conclusions should be interpreted in light of important limitatio
 
 In summary, the analysis provides evidence that commercial success and perceived quality are influenced by different factors such that a film can be highly rated without earning the most revenue, and a commercially successful film may not always receive the highest ratings. These findings highlight the complexity of defining “success” in the film industry and demonstrate the importance of considering the combination of multiple factors when evaluating film performance.
 
-## Recommendation :
+## Recommendation
 
 **For Studios Prioritising Critical Acclaim**\
 
