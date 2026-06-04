@@ -115,6 +115,28 @@ ggplot(imdb_clean, aes(x = Released_Year)) +
 
 The temporal distribution shown in (@fig-year-dist) displays a strong skew toward more recent films, meaning older films are underrepresented, limiting the ability to generalise conclusions across different film eras.
 
+```{r}
+#| label: tbl-success-stats
+#| fig-cap: Summary Statistics of Film Success Variables (IMDb Rating & Gross Box Office Revenue)
+film_success_stats <- imdb_clean %>%
+  select(IMDB_Rating, Gross) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>% 
+  group_by(Variable) %>%
+  summarise(
+    Count = sum(!is.na(Value)),
+    Mean = mean(Value, na.rm = TRUE),
+    Median = median(Value, na.rm = TRUE),
+    Min = min(Value, na.rm = TRUE),
+    Max = max(Value, na.rm = TRUE)
+  )
+
+kable(film_success_stats,
+      digits = 2)
+
+```
+
+From @tbl-success-stats, it appears that gross box office revenue is highly skewed, where the average gross revenue is much greater than the median value, which indicates that the measure is dominated by a few blockbuster films. In contrast, the IMDb ratings have low variability with close mean and median values, reflective of the dataset as it only contains the top 1000 films on IMDb.
+
 Runtime was grouped into four categories to allow comparison across film lengths:
 
 -   Less than 90 minutes
@@ -135,19 +157,19 @@ The analysis examines two measures of film success separately:
 
 The following factors were examined against both measures:
 
--   `Genre` -Average gross revenue compared across genres (Figure 1) and average IMDB rating compared across genres (Table 1)
+-   `Genre` - Average gross revenue compared across genres and average IMDB rating compared across genres
 
--   `Runtime` - Average IMDB rating (Figure 2) and average gross revenue (Figure 3) compared across runtime groups
+-   `Runtime` - Average IMDB rating and average gross revenue compared across runtime groups
 
--   `Metascore` - Relationship between critic score and IMDB rating examined using a scatter plot (Figure 4)
+-   `Metascore` - Relationship between critic score and IMDB rating examined using a scatter plot
 
--   `Number of votes` - Relationship between vote count and IMDB rating examined using a scatter plot (Figure 5)
+-   `Number of votes` - Relationship between vote count and IMDB rating examined using a scatter plot
 
--   `Director` - Top directors ranked by average IMDB rating (Figure 6) and average gross revenue (Figure 7)
+-   `Director` - Top directors ranked by average IMDB rating and average gross revenue
 
--   `Actor` - Top actors ranked by average IMDB rating (Table 2) and average gross revenue (Figure 8)
+-   `Actor` - Top actors ranked by average IMDB rating and average gross revenue
 
--   `Release year` - Distribution of films across release years examined to identify temporal patterns in the dataset (Figure 9)
+-   `Release year` - Distribution of films across release years examined to identify temporal patterns in the dataset
 
 All figures and tables are produced using tidyverse (ggplot2) (@tidyverse) and knitr (@knitr) within a reproducible Quarto document (@quarto).
 
