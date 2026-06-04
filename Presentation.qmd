@@ -1,0 +1,9 @@
+---
+title: "What Factors Drive High IMDB Ratings andBox Office Revenue?"
+author:
+  - name: Phoebe Zhang
+  - name: Tushar Dhanorkar
+  - name: Isha Mantri
+format: revealjs
+editor: visual
+---
